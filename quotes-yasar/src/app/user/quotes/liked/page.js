@@ -19,13 +19,13 @@ export default function LikedQuotesPage() {
           href="/" 
           className="text-slate-600 hover:text-slate-900 mb-6 font-medium inline-block flex items-center gap-2"
         >
-          <span>←</span> Ana Sayfaya Dön
+          <span>←</span> Return to Home Page
         </Link>
        <H3 element='h1'>Liked Quotes</H3>
       
   
       {likedQuotes.length === 0 ? (
-        <p className='text-slate-500 text-lg'>Henüz hiç söz beğenmediniz.</p>
+        <p className='text-slate-500 text-lg'>You haven't liked any of the quotes yet.</p>
       ) : (
        
         <div className='flex flex-col gap-6 w-full max-w-2xl px-4'>
@@ -33,9 +33,9 @@ export default function LikedQuotesPage() {
             <section key={item.originalIndex} className='bg-slate-50/50 rounded-md p-8 flex flex-col shadow-sm'>
               
               <div className='self-end flex items-center gap-3 mb-4'>
-                <span className='font-medium text-slate-600'>Listeden Kaldır:</span>
-                {/* Silme butonuna tıkladığımızda o sözün orijinal sırasını (id) gönderiyoruz */}
-                <Button variant={'icon'} onClick={() => handleUnlikeQuote(item.originalIndex)}>
+                <span className='font-medium text-slate-600'>Remove from list :</span>
+              
+                <Button variant={'primary'} onClick={() => handleUnlikeQuote(item.originalIndex)}>
                   💔
                 </Button>
               </div>
