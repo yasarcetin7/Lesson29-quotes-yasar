@@ -3,17 +3,19 @@ export function Button ({variant, onClick, children}) {
 
   switch(variant) {
     case 'primary': 
-      buttonStyles = 'bg-slate-400/90 text-slate-900';
+      buttonStyles = 'bg-slate-300/90 text-slate-700';
       break;
     case 'secondary': 
-      buttonStyles = 'bg-slate-200/90 text-slate-800';
+      buttonStyles = 'bg-slate-300/90 text-slate-800';
       break;
     default:
       buttonStyles = 'bg-slate-400/90 text-slate-900';
   }
 
   return (
-    <button className={`text-md font-semibold py-2 px-4 rounded-md flex gap-2 text-center justify-center ${buttonStyles}`} onClick={onClick}>
+    <button className={`text-base font-semibold px-4 py-1 rounded-md flex gap-4 
+      text-center justify-center  hover:opacity-70 transition-opacity
+     ${buttonStyles}`} onClick={onClick}>
       {children}
     </button>
   );
