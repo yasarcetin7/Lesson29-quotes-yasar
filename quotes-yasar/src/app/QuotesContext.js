@@ -17,21 +17,24 @@ export function QuotesContextProvider({ children }) {
   function handleLikeQuote() {
     const updatedQuotes = quotes.map((quote, id) => {
       if (id === quoteIndex) {
-        const currentLikes = typeof quote.likedBy === 'number' ? quote.likedBy : 0;
-        return { ...quote, likedBy: currentLikes + 1, isLiked: true };
+        const currentLikes = typeof quote.likeCount === 'number' ? quote.likeCount : 0;
+  if (quote.isLiked) {
+          return { ...quote, likeCount: currentLikes - 1, isLiked: false };
+        }
+        return { ...quote, likeCount: currentLikes + 1, isLiked: true };
       }
       return quote;
     });
-
     setQuotes(updatedQuotes);
   }
+
   // Unlike function
   function handleUnlikeQuote(quoteIdToUnlike) {
     const updatedQuotes = quotes.map((quote, id) => {
       if (id === quoteIdToUnlike) {
-        // DÜZELTME: ++ operatörü kaldırıldı
-        const currentLikes = typeof quote.likedBy === 'number' ? quote.likedBy : 1;
-        return { ...quote, likedBy: currentLikes - 1, isLiked: false };
+      
+        const currentLikes = typeof quote.likeCount === 'number' ? quote.likeCount : 1;
+        return { ...quote, likeCount: currentLikes - 1, isLiked: false };
       }
       return quote;
     });

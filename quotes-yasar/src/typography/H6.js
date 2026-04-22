@@ -10,7 +10,7 @@ export function H6({ element, children }) {
       );
     default:
       return (
-        <h3 className='text-l font-semibold text-slate-700'>{children}</h3>
+        <h6 className='text-l font-semibold text-slate-700'>{children}</h6>
       );
   }
 }

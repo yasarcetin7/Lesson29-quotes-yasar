@@ -3,8 +3,8 @@ import { QuotesContextProvider } from "./QuotesContext.js";
 
 
 export const metadata = {
-  title: "Random Quotes Application",
-  description: "Random Quotes Application ",
+  title: "Random Quotes App",
+  description: "Random Quotes App",
 };
 
 export default function RootLayout({ children }) {

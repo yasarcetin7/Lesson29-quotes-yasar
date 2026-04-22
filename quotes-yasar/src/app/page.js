@@ -13,17 +13,24 @@ export default function Home() {
     handleLikeQuote 
   } = useContext(QuotesContext);
   const currentQuote = quotes[quoteIndex];
-  const { quote, author, likedBy } = currentQuote; 
+  const { quote, author, likeCount } = currentQuote; 
 
   return (
-    <main className='min-h-screen flex items-center justify-center bg-slate-200'>
-
-      <section className='bg-slate-50/50 rounded-md p-10 flex flex-col min-w-[400px]'>
+    
+    <main className='min-h-screen flex items-center justify-center  bg-slate-200'>
+      <div className='w-full max-w-2xl px-4 flex flex-col'>
+       <Link 
+            href="/user/quotes/liked" 
+            className="text-slate-600 hover:text-slate-900 mb-6 font-medium inline-block flex items-center gap-2"
+          >
+           <span>--</span> See quotes I liked<span>--</span>
+          </Link>
+      <section className='bg-slate-50/50 rounded-md p-10 flex flex-col w-full max-w-lg'>
         <div className='self-end flex items-center gap-3 mb-6'>
           <span className='font-bold text-red-500'>
-            {likedBy || 0} Like
+            {likeCount || 0} Like
           </span>
-          <Button variant={'icon'} onClick={handleLikeQuote}>
+          <Button variant={'primary'} onClick={handleLikeQuote}>
             ❤️
           </Button>
         </div>
@@ -34,12 +41,6 @@ export default function Home() {
         <span className='text-md font-semibold text-slate-900 self-end mt-4'>
           - {author}
         </span>
-        <Link 
-            href="/user/quotes/liked" 
-            className="text-slate-600 hover:text-slate-900 mb-6 font-medium inline-block flex items-center gap-2"
-          >
-            See quotes I liked
-          </Link>
         <div className='mt-6 flex flex-col'>
           <Button variant={'primary'} onClick={handleQuoteIndexUpdate}>
             Next Quote
@@ -47,6 +48,7 @@ export default function Home() {
         </div>
         
       </section>
+      </div>
     </main>
   );
 }
