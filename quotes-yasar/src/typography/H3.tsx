@@ -1,4 +1,11 @@
-export function H3({ element, children }) {
+import React from 'react';
+
+interface H3Props {
+  element?: 'p' | 'span';    
+  children: React.ReactNode; 
+}
+
+export function H3({ element, children }: H3Props) {
   switch (element) {
     case 'p':
       return (

@@ -2,6 +2,11 @@
 
 import { ThemeProvider } from 'next-themes'
 
-export function Providers({ children }) {
+interface ProvidersProps {
+  children: React.ReactNode;
+}
+
+export function Providers({ children }: ProvidersProps) {
   return <ThemeProvider attribute="class" defaultTheme="system" enableSystem>{children}</ThemeProvider>
 }
+
