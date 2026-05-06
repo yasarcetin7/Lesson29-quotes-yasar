@@ -1,10 +1,10 @@
 'use client';
 
-import React, { createContext, useState } from 'react';
-import { quotes as initialQuotes, Quote } from './quotes'; // Quote tipini de içeri alıyoruz (Dosya yolunu projene göre ayarlayabilirsin)
+// 1. useEffect'i içeri aktarmayı unutmuyoruz
+import React, { createContext, useState, useEffect } from 'react'; 
+import { quotes as initialQuotes, Quote } from './quotes'; 
 import { getRandomNumber } from '../helperfunctions/helperfunctions';
 
-// 1. Context'in içinde neler olacağını sözleşme ile belirliyoruz
 interface QuotesContextType {
   quotes: Quote[];
   quoteIndex: number;
@@ -13,10 +13,8 @@ interface QuotesContextType {
   handleUnlikeQuote: (quoteIdToUnlike: number) => void;
 }
 
-// 2. createContext'e bu sözleşmeyi uyguluyoruz ({} as QuotesContextType ile boş başlasa da hata vermesini engelliyoruz)
 export const QuotesContext = createContext<QuotesContextType>({} as QuotesContextType);
 
-// 3. Provider bileşeninin proplarını tanımlıyoruz
 interface QuotesContextProviderProps {
   children: React.ReactNode;
 }
@@ -24,6 +22,16 @@ interface QuotesContextProviderProps {
 export function QuotesContextProvider({ children }: QuotesContextProviderProps) {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [quotes, setQuotes] = useState<Quote[]>(initialQuotes);
+
+
+  useEffect(() => {
+    const savedQuotes = localStorage.getItem('mySavedQuotes');
+    
+    if (savedQuotes) {
+      setQuotes(JSON.parse(savedQuotes));
+    }
+  }, []);
+  // -------------------------------------------------------------
 
   function handleQuoteIndexUpdate() {
     const nextIndex = getRandomNumber(0, quotes.length - 1);
@@ -41,7 +49,10 @@ export function QuotesContextProvider({ children }: QuotesContextProviderProps) 
       }
       return quote;
     });
+    
     setQuotes(updatedQuotes);
+    
+    localStorage.setItem('mySavedQuotes', JSON.stringify(updatedQuotes));
   }
 
   function handleUnlikeQuote(quoteIdToUnlike: number) {
@@ -52,7 +63,10 @@ export function QuotesContextProvider({ children }: QuotesContextProviderProps) 
       }
       return quote;
     });
+    
     setQuotes(updatedQuotes);
+    
+    localStorage.setItem('mySavedQuotes', JSON.stringify(updatedQuotes));
   }
 
   return (

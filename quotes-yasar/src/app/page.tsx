@@ -4,43 +4,67 @@ import { Button } from "@/components/Button";
 import { H3 } from "@/typography/H3";
 import { QuotesContext } from "./QuotesContext";
 import Link from "next/link";
-
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 export default function Home() {
   const { quotes, quoteIndex, handleQuoteIndexUpdate, handleLikeQuote } =
     useContext(QuotesContext);
-
+  const { user, isLoading } = useUser();
   const currentQuote = quotes[quoteIndex];
   const { quote, author, likeCount } = currentQuote;
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center bg-slate-200 dark:bg-slate-950 transition-colors duration-300 pt-20 pb-20 sm:pt-0 sm:pb-0">
-      {/* 1. TEMA BUTONU: Sağ Üst Köşeye Sabitlendi */}
-      <div className="absolute top-4 right-4 z-50">
-        <ThemeSwitcher />
-      </div>
+    <main className="relative min-h-screen flex items-center justify-center bg-base-200 transition-colors duration-300 pt-24 pb-20 sm:pt-0 sm:pb-0">
+      <nav className="absolute top-0 left-0 w-full flex items-center justify-between p-4 px-6 md:px-10 z-50 bg-transparent">
+        
+        <div className="flex items-center gap-4">
 
-      <div className="absolute bottom-4 right-4 avatar">
-        <div className="w-12 sm:w-16 rounded-full border-2 border-purple dark:border-tahiti">
-          <img
-            src="https://img.daisyui.com/images/profile/demo/superperson@192.webp"
-            alt="User Avatar"
-          />
+          {/* AVATAR KISMI */}
+          <div className="w-10 sm:w-12 rounded-full border-2 border-primary overflow-hidden shadow-sm">
+            <img 
+              src={user?.picture || "https://img.daisyui.com/images/profile/demo/superperson@192.webp"} 
+              alt="Tailwind-CSS-Avatar-component"
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+  
+          {!isLoading && !user && (
+            <a 
+              href="/auth/login" 
+              className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
+            >
+              Log in
+            </a>
+          )}
+          
+          {!isLoading && user && (
+            <a 
+              href="/auth/logout" 
+              className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20">
+              Log out
+            </a>
+          )}
         </div>
-      </div>
 
-      <div className="w-full max-w-lg px-4 flex flex-col items-center gap-4">
+        
+        <div>
+          <ThemeSwitcher />
+        </div>
+      </nav>
+    
+      {/* --- ANA İÇERİK --- */}
+      <div className="w-full max-w-lg px-5 flex flex-col items-center gap-5 mt-16 sm:mt-0">
         <Link
           href="/user/quotes/liked"
-          className="w-full font-medium flex items-center justify-center gap-2 bg-slate-50 dark:bg-slate-800 text-purple dark:text-tahiti p-3 px-6 rounded-full hover:opacity-80 transition-opacity"
-        >
+          className="btn btn-primary w-full rounded-md shadow-md border border-base-content/20">
           <span>--</span> See quotes I liked <span>--</span>
         </Link>
-
-        <section className="bg-slate-50/80 dark:bg-slate-800/80 rounded-md  p-6 md:p-10 flex flex-col w-full shadow-lg">
+        <section className="bg-base-100 rounded-md p-8 md:p-12 flex flex-col w-full shadow-xl border border-base-content/20">
           <div className="self-end flex items-center gap-3 mb-4 md:mb-6">
-            <span className="font-bold text-red-700 dark:text-red-400">
+            
+            <span className="font-bold text-error">
               {likeCount || 0} Like
             </span>
             <Button variant={"primary"} onClick={handleLikeQuote} aria-label="Like this quote">
@@ -50,7 +74,7 @@ export default function Home() {
 
           <H3 element="p">{quote}</H3>
 
-          <span className="text-sm md:text-base font-semibold text-slate-900 dark:text-slate-100 self-end mt-4">
+          <span className="text-sm md:text-base font-semibold text-base-content/80 self-end mt-4">
             - {author}
           </span>
 
@@ -61,6 +85,7 @@ export default function Home() {
           </div>
         </section>
       </div>
+
     </main>
   );
 }
