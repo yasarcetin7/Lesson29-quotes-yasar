@@ -2,8 +2,6 @@ import "./globals.css";
 import { QuotesContextProvider } from "./QuotesContext";
 import { Providers } from "./providers";
 
-
-
 export const metadata = {
   title: "Random Quotes App",
   description: "Random Quotes App",
@@ -12,12 +10,15 @@ export const metadata = {
 interface RootLayoutProps {
   children: React.ReactNode;
 }
-export default function RootLayout({ children }) {
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning className="h-full antialiased">
       <body className="min-h-full">
         <Providers>
-          <QuotesContextProvider>{children}</QuotesContextProvider>
+          <QuotesContextProvider>
+            {children}
+          </QuotesContextProvider>
         </Providers>
       </body>
     </html>

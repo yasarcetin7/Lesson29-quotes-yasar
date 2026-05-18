@@ -5,7 +5,7 @@ import { H3 } from "@/typography/H3";
 import { QuotesContext } from "./QuotesContext";
 import Link from "next/link";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@auth0/nextjs-auth0';
 
 export default function Home() {
   const { quotes, quoteIndex, handleQuoteIndexUpdate, handleLikeQuote } =
@@ -23,14 +23,16 @@ export default function Home() {
           {/* AVATAR KISMI */}
           <div className="w-10 sm:w-12 rounded-full border-2 border-primary overflow-hidden shadow-sm">
             <img 
-              src={user?.picture || "https://img.daisyui.com/images/profile/demo/superperson@192.webp"} 
+              src={user?.picture || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=random`}
               alt="Tailwind-CSS-Avatar-component"
               className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
             />
           </div>
 
   
           {!isLoading && !user && (
+            
             <a 
               href="/auth/login" 
               className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
@@ -40,12 +42,29 @@ export default function Home() {
           )}
           
           {!isLoading && user && (
-            <a 
-              href="/auth/logout" 
-              className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20">
-              Log out
-            </a>
-          )}
+         <>
+       <a 
+        href="/auth/logout" 
+        className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
+       >
+       Log out
+        </a>
+
+        <Link
+         href="/user/quotes/new"
+        className="btn btn-sm btn-primary text-primary-content rounded-md shadow-sm border border-base-content/20"
+        >
+         Add Quote
+        </Link>
+        
+        <Link
+          href="/user/quotes/liked"
+          className="btn btn-sm btn-primary text-primary-content rounded-md shadow-sm border border-base-content/20">
+          See quotes I liked 
+        </Link>
+
+      </>
+       )}
         </div>
 
         
@@ -56,11 +75,7 @@ export default function Home() {
     
       {/* --- ANA İÇERİK --- */}
       <div className="w-full max-w-lg px-5 flex flex-col items-center gap-5 mt-16 sm:mt-0">
-        <Link
-          href="/user/quotes/liked"
-          className="btn btn-primary w-full rounded-md shadow-md border border-base-content/20">
-          <span>--</span> See quotes I liked <span>--</span>
-        </Link>
+        
         <section className="bg-base-100 rounded-md p-8 md:p-12 flex flex-col w-full shadow-xl border border-base-content/20">
           <div className="self-end flex items-center gap-3 mb-4 md:mb-6">
             
