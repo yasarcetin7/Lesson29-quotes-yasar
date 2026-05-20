@@ -10,9 +10,10 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 export default function LikedQuotesPage() {
   const { quotes, handleUnlikeQuote } = useContext(QuotesContext);
   const { user, isLoading } = useUser();
+  const currentUserId = user?.sub || "guest";
   const likedQuotes = quotes
     .map((quote, index) => ({ ...quote, originalIndex: index }))
-    .filter((quote) => quote.isLiked === true);
+    .filter((quote) => quote.likedBy.includes(currentUserId));
 
   return (
     <main className="relative min-h-screen flex items-center justify-center bg-base-200 transition-colors duration-300 pt-24 pb-20 sm:pt-0 sm:pb-0">
@@ -31,12 +32,18 @@ export default function LikedQuotesPage() {
 
   
   {!isLoading && user && 
-  (
-    <a 
+  (<>   <a 
       href="/auth/logout" 
       className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20">
-      Log out
+      Log Out
     </a>
+
+    <a
+    href="/"
+    className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
+  >
+    Home Page
+  </a></>  
   )}
 
 </div>
@@ -46,14 +53,7 @@ export default function LikedQuotesPage() {
        </nav>
 
       <div className="w-full max-w-lg px-4 flex flex-col items-center gap-4 mt-24">
-  <a
-    href="/"
-    className="btn btn-primary w-full rounded-md shadow-md border border-base-content/20"
-  >
-    <span>←</span> Return to Home Page
-  </a>
-
- 
+  
   <div className="font-medium text-primary w-full text-center mt-2 mb-1 border border-base-content/20">
     <H3 element="p">Liked Quotes</H3>
   </div>
