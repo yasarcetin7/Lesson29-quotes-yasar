@@ -1,7 +1,7 @@
 import { auth0 } from "./lib/auth0";
 
 
-export async function middleware(request: any) {
+export async function proxy(request: any) {
   return await auth0.middleware(request);
 }
 

@@ -9,9 +9,10 @@ import { useUser } from '@auth0/nextjs-auth0';
 export default function LikedQuotesPage() {
   const { quotes, handleUnlikeQuote } = useContext(QuotesContext);
   const { user, isLoading } = useUser();
+  const currentUserId = user?.sub || "guest";
   const likedQuotes = quotes
     .map((quote, index) => ({ ...quote, originalIndex: index }))
-    .filter((quote) => quote.isLiked === true);
+    .filter((quote) => quote.likedBy.includes(currentUserId));
 
   return (
     <main className="relative min-h-screen flex items-center justify-center bg-base-200 transition-colors duration-300 pt-24 pb-20 sm:pt-0 sm:pb-0">
@@ -43,6 +44,7 @@ export default function LikedQuotesPage() {
             >
               Homepage
             </a></>    )}</div>
+
 <div className="absolute top-4 right-4 z-50">
         <ThemeSwitcher />
       </div>

@@ -5,14 +5,16 @@ import { H3 } from "@/typography/H3";
 import { QuotesContext } from "./QuotesContext";
 import Link from "next/link";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+
 import { useUser } from '@auth0/nextjs-auth0';
+
 
 export default function Home() {
   const { quotes, quoteIndex, handleQuoteIndexUpdate, handleLikeQuote } =
     useContext(QuotesContext);
   const { user, isLoading } = useUser();
   const currentQuote = quotes[quoteIndex];
-  const { quote, author, likeCount } = currentQuote;
+  const { quote, author, likedBy } = currentQuote;
 
   return (
     <main className="relative min-h-screen flex items-center justify-center bg-base-200 transition-colors duration-300 pt-24 pb-20 sm:pt-0 sm:pb-0">
@@ -21,7 +23,7 @@ export default function Home() {
         <div className="flex items-center gap-4">
 
           {/* AVATAR KISMI */}
-          <div className="w-10 sm:w-12 rounded-full border-2 border-primary overflow-hidden shadow-sm">
+          <div className="w-10 sm:w-12 rounded-full border-2 border-primary overflow-hidden shadow-sm bg-base-300">
             <img 
               src={user?.picture || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=random`}
               alt="Tailwind-CSS-Avatar-component"
@@ -30,18 +32,29 @@ export default function Home() {
             />
           </div>
 
-  
           {!isLoading && !user && (
-            
+
+           <> 
+
             <a 
               href="/auth/login" 
               className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
             >
               Log in
             </a>
+
+            <Link
+              href="/user/quotes/liked"
+              className="btn btn-sm btn-primary text-primary-content rounded-md shadow-sm border border-base-content/20"
+            >
+              See quotes I liked 
+            </Link>
+           </>
           )}
           
+          
           {!isLoading && user && (
+
          <>
        <a 
         href="/auth/logout" 
@@ -65,9 +78,9 @@ export default function Home() {
 
       </>
        )}
+
         </div>
 
-        
         <div>
           <ThemeSwitcher />
         </div>
@@ -80,8 +93,9 @@ export default function Home() {
           <div className="self-end flex items-center gap-3 mb-4 md:mb-6">
             
             <span className="font-bold text-error">
-              {likeCount || 0} Like
+              {likedBy?.length || 0} Like
             </span>
+
             <Button variant={"primary"} onClick={handleLikeQuote} aria-label="Like this quote">
               ❤️
             </Button>
