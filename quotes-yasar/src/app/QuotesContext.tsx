@@ -1,6 +1,6 @@
 'use client';
 
-// 1. useEffect'i içeri aktarmayı unutmuyoruz
+
 import React, { createContext, useState, useEffect } from 'react'; 
 import { quotes as initialQuotes, Quote } from './quotes'; 
 import { getRandomNumber } from '../helperfunctions/helperfunctions';

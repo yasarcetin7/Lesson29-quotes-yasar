@@ -32,13 +32,18 @@ export default function Home() {
 
   
           {!isLoading && !user && (
-            
+            <>
             <a 
               href="/auth/login" 
-              className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
-            >
+              className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20">
               Log in
             </a>
+
+            <Link
+              href="/user/quotes/liked"
+              className="btn btn-sm btn-primary text-primary-content rounded-md shadow-sm border border-base-content/20">
+              See quotes I liked 
+            </Link> </>
           )}
           
           {!isLoading && user && (

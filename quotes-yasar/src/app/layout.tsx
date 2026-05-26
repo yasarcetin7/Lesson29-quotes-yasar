@@ -14,7 +14,7 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning className="h-full antialiased">
-      <body className="min-h-full">
+      <body suppressHydrationWarning className="min-h-full">
         <Providers>
           <QuotesContextProvider>
             {children}
