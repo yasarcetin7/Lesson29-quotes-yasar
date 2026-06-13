@@ -3,9 +3,8 @@ import { QuotesContext } from "@/app/QuotesContext";
 import { Button } from "@/components/Button";
 import { H3 } from "@/typography/H3";
 import { useContext } from "react";
-import Link from "next/link";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import { useUser } from '@auth0/nextjs-auth0/client';
+import { useUser } from '@auth0/nextjs-auth0';
 
 export default function LikedQuotesPage() {
   const { quotes, handleUnlikeQuote } = useContext(QuotesContext);
@@ -24,29 +23,28 @@ export default function LikedQuotesPage() {
           {/* AVATAR KISMI */}
           <div className="w-10 sm:w-12 rounded-full border-2 border-primary overflow-hidden shadow-sm">
             <img 
-              src={user?.picture || "https://img.daisyui.com/images/profile/demo/superperson@192.webp"} 
+              src={user?.picture || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=random`}
               alt="Tailwind-CSS-Avatar-component"
               className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
             />
           </div>
 
-  
-  {!isLoading && user && 
-  (<>   <a 
-      href="/auth/logout" 
-      className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20">
-      Log Out
-    </a>
+   {!isLoading && user && (
+						<>
+            <a 
+              href="/auth/logout" 
+              className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
+            >
+              Log out
+            </a>
+						<a 
+              href="/" 
+              className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
+            >
+              Homepage
+            </a></>    )}</div>
 
-    <a
-    href="/"
-    className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
-  >
-    Home Page
-  </a></>  
-  )}
-
-</div>
 <div className="absolute top-4 right-4 z-50">
         <ThemeSwitcher />
       </div>

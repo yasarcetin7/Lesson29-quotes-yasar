@@ -5,8 +5,9 @@ import { H3 } from "@/typography/H3";
 import { QuotesContext } from "./QuotesContext";
 import Link from "next/link";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-// Eski v3 importu yerine güncel v4 importunu kullanıyoruz (daha önce konuştuğumuz gibi)
-import { useUser } from '@auth0/nextjs-auth0'; 
+
+import { useUser } from '@auth0/nextjs-auth0';
+
 
 export default function Home() {
   const { quotes, quoteIndex, handleQuoteIndexUpdate, handleLikeQuote } =
@@ -24,15 +25,17 @@ export default function Home() {
           {/* AVATAR KISMI */}
           <div className="w-10 sm:w-12 rounded-full border-2 border-primary overflow-hidden shadow-sm bg-base-300">
             <img 
-              src={user?.picture || `https://ui-avatars.com/api/?name=${user?.name || 'Guest'}&background=random`} 
-              alt="User Avatar"
+              src={user?.picture || `https://ui-avatars.com/api/?name=${user?.name || 'User'}&background=random`}
+              alt="Tailwind-CSS-Avatar-component"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
           </div>
 
           {!isLoading && !user && (
+
            <> 
+
             <a 
               href="/auth/login" 
               className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
@@ -51,23 +54,31 @@ export default function Home() {
           
           
           {!isLoading && user && (
-            <>
 
-              <a 
-                href="/auth/logout" 
-                className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
-              >
-                Log Out
-              </a>
+         <>
+       <a 
+        href="/auth/logout" 
+        className="btn btn-sm btn-success text-success-content rounded-md shadow-sm border border-base-content/20"
+       >
+       Log out
+        </a>
 
-              <Link
-                href="/user/quotes/liked"
-                className="btn btn-sm btn-primary text-primary-content rounded-md shadow-sm border border-base-content/20"
-              >
-                See quotes I liked 
-              </Link>
-            </>
-          )}
+        <Link
+         href="/user/quotes/new"
+        className="btn btn-sm btn-primary text-primary-content rounded-md shadow-sm border border-base-content/20"
+        >
+         Add Quote
+        </Link>
+        
+        <Link
+          href="/user/quotes/liked"
+          className="btn btn-sm btn-primary text-primary-content rounded-md shadow-sm border border-base-content/20">
+          See quotes I liked 
+        </Link>
+
+      </>
+       )}
+
         </div>
 
         <div>
