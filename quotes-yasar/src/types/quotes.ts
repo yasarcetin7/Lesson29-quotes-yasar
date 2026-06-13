@@ -16,7 +16,7 @@ export type AddNewQuoteState = {
   data?: {
     author: string;
     quote: string;
-    category?: string[];
+    category?: string;
   };
 };
 
