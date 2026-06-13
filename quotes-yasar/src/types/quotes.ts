@@ -31,7 +31,7 @@ export const newQuoteSchema = z.object({
   quote: z
     .string()
     .trim()
-    .min(6, { message: 'Quote should be at least 5 characters long' })
+    .min(6, { message: 'Quote should be at least 6 characters long' })
     .max(50, {
       message:
         'Quote should be 300 characters long maximum. Please try a shorter one.',}),
