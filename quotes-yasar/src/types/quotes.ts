@@ -36,10 +36,22 @@ export const newQuoteSchema = z.object({
       message:
         'Quote should be 300 characters long maximum. Please try a shorter one.',}),
 
-  category: z.enum(['life', 'health', 'motivation', 'wisdom'] as const, {
-    error: 'Please select a valid category',
-  }),
+
+  category: z.array(z.enum(['life', 'health', 'motivation', 'wisdom'] as const))
+    .min(1, 'Please select at least one category'),
 });
 
 // Kurallardan otomatik üretilen form veri tipi
 export type NewQuoteInput = z.infer<typeof newQuoteSchema>;
+
+
+export interface Quote {
+  _id: unknown;
+  quote: string;
+  author: string;
+  likedBy?: number;
+  createdBy: string;
+  adminApproved: boolean;
+  createdAt: string;
+  updatedAt: string;
+}

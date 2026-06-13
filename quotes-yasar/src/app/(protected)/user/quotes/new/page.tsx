@@ -59,7 +59,7 @@ export default function AddNewQuotePage() {
                 user?.picture ||
                 `https://ui-avatars.com/api/?name=${user?.name || "User"}&background=random`
               }
-              alt="Tailwind-CSS-Avatar-component"
+              alt="User Avatar"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
@@ -107,7 +107,6 @@ export default function AddNewQuotePage() {
                   defaultValue={state.data?.author}
                   {...register("author")}
                 />
-                {/* TODO: add other aria attributes like aria-describedby and aria-live */}
                 {state.errors?.fieldErrors?.author && (
                   <FieldError errors={state.errors?.fieldErrors?.author}>
                     {state.errors?.fieldErrors?.author}
@@ -120,7 +119,7 @@ export default function AddNewQuotePage() {
                 )}
               </Field>
               
-               {/* Quote */}
+              {/* Quote */}
               <Field>
                 <FieldLabel htmlFor="quote">Quote</FieldLabel>
                 <Textarea
@@ -143,14 +142,15 @@ export default function AddNewQuotePage() {
                 )}
               </Field>
 
-              {/* category */}
+              {/* Category */}
               <Field>
-                <FieldLabel htmlFor="category">Category</FieldLabel>
+                <FieldLabel htmlFor="category">Category (Hold Ctrl/Cmd to select multiple)</FieldLabel>
                 <select
                   id="category"
-                  className="w-full rounded-md border border-base-content/20 bg-base-100 p-2 text-sm focus:border-primary focus:outline-none"
+                  multiple
+                  className="w-full rounded-md border border-base-content/20 bg-base-100 p-2 text-sm focus:border-primary focus:outline-none min-h-[120px]"
                   aria-invalid={!!state.errors?.fieldErrors?.category}
-                  defaultValue={state.data?.category || ""}
+                  defaultValue={state.data?.category || []}
                   {...register("category")}
                 >
                   <option value="" disabled>
@@ -161,7 +161,6 @@ export default function AddNewQuotePage() {
                   <option value="motivation">Motivation</option>
                   <option value="wisdom">Wisdom</option>
                 </select>
-
                 
                 {state.errors?.fieldErrors?.category && (
                   <FieldError errors={state.errors?.fieldErrors?.category}>
@@ -169,7 +168,6 @@ export default function AddNewQuotePage() {
                   </FieldError>
                 )}
 
-              
                 {clientSideErrors.category && (
                   <FieldError errors={[clientSideErrors.category.message!]}>
                     {clientSideErrors.category.message}

@@ -1,7 +1,9 @@
 'use server';
 
 import { auth0 } from '@/lib/auth0';
+import { Collections, getDb } from '@/lib/db';
 import { newQuoteSchema, AddNewQuoteState } from '@/types/quotes';
+
 
 export async function addNewQuote(
   _currentState: AddNewQuoteState,
@@ -33,8 +35,24 @@ export async function addNewQuote(
       errors: validationErrors,
       data: rawData,
     };
+
   } else {
-    // TODO: connect to DB to save the data
+    const db = await getDb();
+    const col = db.collection(Collections.quotes);
+    const now = new Date();
+    
+    const newQuote = {
+      quote: validationOutput.data.quote,
+      author: validationOutput.data.author,
+      createdBy: session.user.sub, // @Anna To find right docs page in Auth0
+      adminApproved: false,
+      createdAt: now,
+      updatedAt: now
+    }
+
+    const newDoc = await col.insertOne(newQuote);
+    console.log('newDoc', newDoc);
+
     return {
       success: true,
     };

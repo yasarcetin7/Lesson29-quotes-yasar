@@ -1,25 +1,19 @@
+import { redirect } from 'next/navigation';
 import { auth0 } from '@/lib/auth0';
-import { redirect, RedirectType } from 'next/navigation';
 
-
-export default async function ProtectedLayout({ children }) {
+export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
+  // 1. Kullanıcı oturumunu sadece BİR KERE çekiyoruz
   const session = await auth0.getSession();
- if (!session) redirect('/auth/login', RedirectType.replace);
 
-  const { user, error, loading } = await auth0.getSession();
-
-  if (loading) {
-    return <span>Loading...</span>;
+  // 2. Eğer oturum yoksa (kullanıcı giriş yapmamışsa) Auth0 giriş sayfasına şutla!
+  if (!session || !session.user) {
+    redirect('/auth/login');
   }
 
-  if (error) {
-    return (
-      <p>
-        An error occured, try to refesh the page and{' '}
-        <a href='/auth/login'>log in</a>
-      </p>
-    );
-  }
-
-  return (!!user ?  <div>{children}</div> : <></>);
+  // 3. Kullanıcı giriş yapmışsa sorun yok, sayfayı (children) ekranda göster.
+  return (
+    <>
+      {children}
+    </>
+  );
 }
