@@ -5,6 +5,7 @@ import { H3 } from "@/typography/H3";
 import { useContext } from "react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { useUser } from '@auth0/nextjs-auth0';
+import { Nav } from '@/components/nav';
 
 export default function LikedQuotesPage() {
   const { quotes, handleUnlikeQuote } = useContext(QuotesContext);
@@ -15,7 +16,7 @@ export default function LikedQuotesPage() {
 
   return (
     <main className="relative min-h-screen flex items-center justify-center bg-base-200 transition-colors duration-300 pt-24 pb-20 sm:pt-0 sm:pb-0">
-      <nav className="absolute top-0 left-0 w-full flex items-center justify-between p-4 px-6 md:px-10 z-50 bg-transparent">
+      <Nav variant="primary">
         
         <div className="flex items-center gap-4">
 
@@ -46,7 +47,7 @@ export default function LikedQuotesPage() {
 <div className="absolute top-4 right-4 z-50">
         <ThemeSwitcher />
       </div>
-       </nav>
+       </Nav>
 
       <div className="w-full max-w-lg px-4 flex flex-col items-center gap-4 mt-24">
   

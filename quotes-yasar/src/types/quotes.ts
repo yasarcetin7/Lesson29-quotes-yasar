@@ -31,25 +31,26 @@ export const newQuoteSchema = z.object({
   quote: z
     .string()
     .trim()
-    .min(6, { message: 'Quote should be at least 5 characters long' })
-    .max(50, {
+    .min(6, { message: 'Quote should be at least 6 characters long' })
+    .max(300, {
       message:
         'Quote should be 300 characters long maximum. Please try a shorter one.',}),
 
 
-  category: z.array(z.enum(['life', 'health', 'motivation', 'wisdom'] as const))
+category: z.array(z.enum(['life', 'health', 'motivation', 'wisdom'] as const))
     .min(1, 'Please select at least one category'),
 });
 
-// Kurallardan otomatik üretilen form veri tipi
 export type NewQuoteInput = z.infer<typeof newQuoteSchema>;
-
 
 export interface Quote {
   _id: unknown;
   quote: string;
   author: string;
-  likedBy?: number;
+  category: string[];
+  likeCount: number;
+  likedBy: string[]; 
+  isLiked?: boolean;
   createdBy: string;
   adminApproved: boolean;
   createdAt: string;

@@ -1,13 +1,15 @@
 "use client";
 
 import React, { createContext, useState, useEffect } from "react";
-// initialQuotes'u sildik çünkü artık veritabanı kullanıyoruz.
-import { Quote } from "../utils/quotes"; 
+import { Quote } from "../types/quotes"; 
 import { getRandomNumber } from "../utils/helperfunctions";
 import { useUser } from "@auth0/nextjs-auth0/client";
 
 interface QuotesContextType {
   quotes: Quote[];
+  filteredQuotes: Quote[]; 
+  activeCategory: string; 
+  setActiveCategory: (category: string) => void; 
   quoteIndex: number;
   isLoading: boolean;
   error: string | null;
@@ -26,8 +28,11 @@ export function QuotesContextProvider({ children }: { children: React.ReactNode 
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // 🚀 FİLTRELEME STATE'İ
+  const [activeCategory, setActiveCategory] = useState<string>("All");
 
-  // TÜM VERİ ÇEKME İŞLEMİ TEK BİR YERDE TOPLANDI
+  // TÜM VERİ ÇEKME İŞLEMİ
   useEffect(() => {
     async function fetchQuotes() {
       setIsLoading(true);
@@ -42,36 +47,49 @@ export function QuotesContextProvider({ children }: { children: React.ReactNode 
         
         const data = await response.json();
         
-        // API doğrudan bir dizi (array) döndürdüğü için direkt data'yı kullanıyoruz.
-        // Eğer veritabanından geçerli bir dizi geldiyse onu state'e at.
         if (Array.isArray(data) && data.length > 0) {
           setQuotes(data);
         } else {
-          setQuotes([]); // Veri yoksa listeyi boşalt
+          setQuotes([]); 
         }
         
       } catch (err) {
         console.error("Veri çekilirken hata:", err);
-        setError(err instanceof Error ? err.message : "Sözler yüklenemedi.");
+        setError(err instanceof Error ? err.message : "Don't loading quotes");
         setQuotes([]);
       } finally {
-        // Hata da olsa başarılı da olsa loading ekranını kapat!
         setIsLoading(false);
       }
     }
 
-    fetchQuotes(); // Fonksiyonu çağırmayı unutmuyoruz
-  }, []); // Sadece bileşen ilk yüklendiğinde çalışması için boş dizi
+    fetchQuotes(); 
+  }, []);
 
+  const filteredQuotes = activeCategory === "All" 
+    ? quotes 
+    : quotes.filter((q) => q.category && q.category.includes(activeCategory));
+
+  // 🚀 YENİ: Kategoriyi değiştiren ve Index'i sıfırlayan özel fonksiyon
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    setQuoteIndex(0); // Liste değiştiğinde her zaman ilk söze dön
+  };
+
+  // Sonraki söze geçme mantığı artık tüm sözler (quotes) üzerinden değil, filtrelenenler üzerinden çalışıyor
   function handleQuoteIndexUpdate() {
-    if (quotes.length === 0) return; // Liste boşsa çökmesini engelle
-    const nextIndex = getRandomNumber(0, quotes.length - 1);
+    if (filteredQuotes.length === 0) return; 
+    const nextIndex = getRandomNumber(0, filteredQuotes.length - 1);
     setQuoteIndex(nextIndex);
   }
 
   function handleLikeQuote() {
-    const updatedQuotes = quotes.map((quote, id) => {
-      if (id === quoteIndex) {
+    // Beğenilen sözü filtrelenmiş listeden buluyoruz
+    const currentQuote = filteredQuotes[quoteIndex];
+    if (!currentQuote) return;
+
+    const updatedQuotes = quotes.map((quote) => {
+      // Index yerine ID veya söz metni ile eşleştirme yapıyoruz (Filtrelemede indexler kayacağı için)
+      if (quote._id === currentQuote._id || quote.quote === currentQuote.quote) {
         const currentLikes = typeof quote.likeCount === "number" ? quote.likeCount : 0;
         if (quote.isLiked) {
           return { ...quote, likeCount: currentLikes - 1, isLiked: false };
@@ -102,6 +120,9 @@ export function QuotesContextProvider({ children }: { children: React.ReactNode 
     <QuotesContext.Provider
       value={{
         quotes,
+        filteredQuotes, // Sayfaya filtrelenmiş olanı gönderiyoruz
+        activeCategory, 
+        setActiveCategory: handleCategoryChange, 
         quoteIndex,
         isLoading,
         error,

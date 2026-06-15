@@ -1,7 +1,8 @@
 "use client";
-
+import { Nav } from '@/components/nav';
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { Button } from "@/components/Button";
+import { Main } from "@/components/Main";
 import {
   Field,
   FieldError,
@@ -48,9 +49,10 @@ export default function AddNewQuotePage() {
 
   if (state.success) return redirect("/user/quotes/new/success");
 
+
   return (
-    <main className="relative min-h-screen flex items-center justify-center bg-base-200 transition-colors duration-300 pt-24 pb-20 sm:pt-0 sm:pb-0">
-      <nav className="absolute top-0 left-0 w-full flex items-center justify-between p-4 px-6 md:px-10 z-50 bg-transparent">
+    <Main variant="primary">
+       <Nav variant="primary"> 
         <div className="flex items-center gap-4">
           {/* AVATAR KISMI */}
           <div className="w-10 sm:w-12 rounded-full border-2 border-primary overflow-hidden shadow-sm">
@@ -86,7 +88,7 @@ export default function AddNewQuotePage() {
         <div>
           <ThemeSwitcher />
         </div>
-      </nav>
+      </Nav>
 
       <form
         className="bg-base-100 rounded-md p-7 md:p-12 flex flex-col w-full shadow-xl border border-base-content/20 max-w-md"
@@ -144,7 +146,7 @@ export default function AddNewQuotePage() {
 
               {/* Category */}
               <Field>
-                <FieldLabel htmlFor="category">Category (Hold Ctrl/Cmd to select multiple)</FieldLabel>
+                <FieldLabel htmlFor="category">Category</FieldLabel>
                 <select
                   id="category"
                   multiple
@@ -188,6 +190,6 @@ export default function AddNewQuotePage() {
         </FieldGroup>
       </form>
       {state.message ? <p className="mt-10">{state.message}</p> : <></>}
-    </main>
+    </Main>
   );
 }

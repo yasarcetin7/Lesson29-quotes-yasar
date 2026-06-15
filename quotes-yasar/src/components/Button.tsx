@@ -44,8 +44,6 @@ const buttonVariants = cva(
   }
 )
 
-// TypeScript'in type="submit" veya onClick gibi özelliklere kızmaması için
-// standart HTML buton özelliklerini (ButtonHTMLAttributes) içeriğe dahil ettik
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
   variant?: "default" | "primary" | "outline" | "secondary" | "ghost" | "destructive" | "link";
