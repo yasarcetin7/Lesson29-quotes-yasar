@@ -1,6 +1,10 @@
 import "./globals.css";
 import { QuotesContextProvider } from "./QuotesContext";
 import { Providers } from "./providers";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata = {
   title: "Random Quotes App",
@@ -13,7 +17,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning className="h-full antialiased">
+    <html lang="en" suppressHydrationWarning className={cn("h-full antialiased", "font-sans", geist.variable)}>
       <body suppressHydrationWarning className="min-h-full">
         <Providers>
           <QuotesContextProvider>
