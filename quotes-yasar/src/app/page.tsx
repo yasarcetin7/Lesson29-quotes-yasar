@@ -1,5 +1,5 @@
 "use client";
-// ANA SAYFA
+
 import { useContext } from "react";
 import { Button } from "@/components/Button";
 import { H3 } from "@/typography/H3";
@@ -27,7 +27,6 @@ export default function Home() {
     handleQuoteIndexUpdate,
     handleLikeQuote,
   } = useContext(QuotesContext);
-
   const { user, isLoading: userLoading } = useUser();
 
   // 2. Yüklenme (Loading) Durumu
@@ -159,7 +158,6 @@ export default function Home() {
             </>
           )}
         </div>
-
         {/* TEMA DEĞİŞTİRİCİ */}
         <div>
           <ThemeSwitcher />
@@ -210,6 +208,7 @@ export default function Home() {
               </div>
             )}
           </div>
+          
         </section>
       </div>
     </Main>

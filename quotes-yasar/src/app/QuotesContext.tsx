@@ -94,7 +94,6 @@ export function QuotesContextProvider({ children }: { children: React.ReactNode 
         if (quote.isLiked) {
           return { ...quote, likeCount: currentLikes - 1, isLiked: false };
         }
-        return { ...quote, likeCount: currentLikes + 1, isLiked: true };
       }
       return quote;
     });
@@ -104,6 +103,8 @@ export function QuotesContextProvider({ children }: { children: React.ReactNode 
   }
 
   function handleUnlikeQuote(quoteIdToUnlike: number) {
+    const userId = user?.sub || "guest";
+
     const updatedQuotes = quotes.map((quote, id) => {
       if (id === quoteIdToUnlike) {
         const currentLikes = typeof quote.likeCount === "number" ? quote.likeCount : 1;
