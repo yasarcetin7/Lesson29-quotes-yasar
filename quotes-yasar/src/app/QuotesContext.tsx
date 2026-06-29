@@ -1,100 +1,105 @@
-'use client';
+"use client";
 
-import React, { createContext, useState, useEffect } from 'react'; 
-import { quotes as initialQuotes, Quote } from './quotes'; 
-import { getRandomNumber } from '../helperfunctions/helperfunctions';
-import { useUser } from '@auth0/nextjs-auth0/client';
+import React, { createContext, useState, useEffect } from "react";
+import { Quote } from "../types/quotes"; 
+import { getRandomNumber } from "../utils/helperfunctions";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 interface QuotesContextType {
   quotes: Quote[];
+  filteredQuotes: Quote[]; 
+  activeCategory: string; 
+  setActiveCategory: (category: string) => void; 
   quoteIndex: number;
+  isLoading: boolean;
+  error: string | null;
   handleQuoteIndexUpdate: () => void;
   handleLikeQuote: () => void;
   handleUnlikeQuote: (quoteIdToUnlike: number) => void;
 }
 
-export const QuotesContext = createContext<QuotesContextType>({} as QuotesContextType);
+export const QuotesContext = createContext<QuotesContextType>(
+  {} as QuotesContextType,
+);
 
-interface QuotesContextProviderProps {
-  children: React.ReactNode;
-}
-
-export function QuotesContextProvider({ children }: QuotesContextProviderProps) {
-  const [quoteIndex, setQuoteIndex] = useState(0);
-  const [quotes, setQuotes] = useState<Quote[]>(initialQuotes);
-  
+export function QuotesContextProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
+  const [quoteIndex, setQuoteIndex] = useState(0);
+  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // 🚀 FİLTRELEME STATE'İ
+  const [activeCategory, setActiveCategory] = useState<string>("All");
 
-  // 1. Fetch saved quotes from LocalStorage on mount
+  // TÜM VERİ ÇEKME İŞLEMİ
   useEffect(() => {
-    const savedQuotes = localStorage.getItem('mySavedQuotes');
-    if (savedQuotes) {
-      setQuotes(JSON.parse(savedQuotes));
+    async function fetchQuotes() {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const response = await fetch("/api/quotes");
+        
+        if (!response.ok) {
+          throw new Error("Failed to load quotes");
+        }
+        
+        const data = await response.json();
+        
+        if (Array.isArray(data) && data.length > 0) {
+          setQuotes(data);
+        } else {
+          setQuotes([]); 
+        }
+        
+      } catch (err) {
+        console.error("Veri çekilirken hata:", err);
+        setError(err instanceof Error ? err.message : "Don't loading quotes");
+        setQuotes([]);
+      } finally {
+        setIsLoading(false);
+      }
     }
+
+    fetchQuotes(); 
   }, []);
 
-  // 2. Sync guest likes to the authenticated user's account
-  useEffect(() => {
-    if (user?.sub) {
-      setQuotes((currentQuotes) => {
-        let hasChanges = false;
+  const filteredQuotes = activeCategory === "All" 
+    ? quotes 
+    : quotes.filter((q) => q.category && q.category.includes(activeCategory));
 
-        const syncedQuotes = currentQuotes.map((quote) => {
-          // If this quote was liked by a guest
-          if (quote.likedBy.includes("guest")) {
-            hasChanges = true;
-            
-            // Remove "guest" tag
-            const updatedLikedBy = quote.likedBy.filter((id) => id !== "guest");
-            
-            // Add the actual user ID (if not already added)
-            if (!updatedLikedBy.includes(user.sub as string)) {
-              updatedLikedBy.push(user.sub as string);
-            }
-            
-            return { ...quote, likedBy: updatedLikedBy };
-          }
-          return quote;
-        });
+  // 🚀 YENİ: Kategoriyi değiştiren ve Index'i sıfırlayan özel fonksiyon
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    setQuoteIndex(0); // Liste değiştiğinde her zaman ilk söze dön
+  };
 
-        // Save and return if there are any synchronized quotes
-        if (hasChanges) {
-          localStorage.setItem('mySavedQuotes', JSON.stringify(syncedQuotes));
-          return syncedQuotes;
-        }
-
-        // If no changes, return the list as is
-        return currentQuotes;
-      });
-    }
-  }, [user?.sub]);
-
-  // -------------------------------------------------------------
-
+  // Sonraki söze geçme mantığı artık tüm sözler (quotes) üzerinden değil, filtrelenenler üzerinden çalışıyor
   function handleQuoteIndexUpdate() {
-    const nextIndex = getRandomNumber(0, quotes.length - 1);
+    if (filteredQuotes.length === 0) return; 
+    const nextIndex = getRandomNumber(0, filteredQuotes.length - 1);
     setQuoteIndex(nextIndex);
   }
 
   function handleLikeQuote() {
-    const userId = user?.sub || "guest";
+    // Beğenilen sözü filtrelenmiş listeden buluyoruz
+    const currentQuote = filteredQuotes[quoteIndex];
+    if (!currentQuote) return;
 
-    const updatedQuotes = quotes.map((quote, id) => {
-      if (id === quoteIndex) {
-        // If the user's ID is already in the list (Already liked)
-        if (quote.likedBy.includes(userId)) {
-          // Remove from list (Unlike)
-          return { ...quote, likedBy: quote.likedBy.filter(sub => sub !== userId) };
-        } else {
-          // Add to list (Like)
-          return { ...quote, likedBy: [...quote.likedBy, userId] };
+    const updatedQuotes = quotes.map((quote) => {
+      // Index yerine ID veya söz metni ile eşleştirme yapıyoruz (Filtrelemede indexler kayacağı için)
+      if (quote._id === currentQuote._id || quote.quote === currentQuote.quote) {
+        const currentLikes = typeof quote.likeCount === "number" ? quote.likeCount : 0;
+        if (quote.isLiked) {
+          return { ...quote, likeCount: currentLikes - 1, isLiked: false };
         }
       }
       return quote;
     });
-    
+
     setQuotes(updatedQuotes);
-    localStorage.setItem('mySavedQuotes', JSON.stringify(updatedQuotes));
+    localStorage.setItem("mySavedQuotes", JSON.stringify(updatedQuotes));
   }
 
   function handleUnlikeQuote(quoteIdToUnlike: number) {
@@ -102,24 +107,29 @@ export function QuotesContextProvider({ children }: QuotesContextProviderProps) 
 
     const updatedQuotes = quotes.map((quote, id) => {
       if (id === quoteIdToUnlike) {
-         // Remove the user's ID from the liked list
-        return { ...quote, likedBy: quote.likedBy.filter(sub => sub !== userId) };
+        const currentLikes = typeof quote.likeCount === "number" ? quote.likeCount : 1;
+        return { ...quote, likeCount: currentLikes - 1, isLiked: false };
       }
       return quote;
     });
-    
+
     setQuotes(updatedQuotes);
-    localStorage.setItem('mySavedQuotes', JSON.stringify(updatedQuotes));
+    localStorage.setItem("mySavedQuotes", JSON.stringify(updatedQuotes));
   }
 
   return (
     <QuotesContext.Provider
       value={{
         quotes,
+        filteredQuotes, // Sayfaya filtrelenmiş olanı gönderiyoruz
+        activeCategory, 
+        setActiveCategory: handleCategoryChange, 
         quoteIndex,
+        isLoading,
+        error,
         handleQuoteIndexUpdate,
         handleLikeQuote,
-        handleUnlikeQuote  
+        handleUnlikeQuote,
       }}
     >
       {children}

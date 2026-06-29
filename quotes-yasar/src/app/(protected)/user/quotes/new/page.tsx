@@ -1,7 +1,8 @@
 "use client";
-
+import { Nav } from "@/components/nav";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { Button } from "@/components/Button";
+import { Main } from "@/components/Main";
 import {
   Field,
   FieldError,
@@ -20,10 +21,19 @@ import {
   NewQuoteInput,
 } from "@/types/quotes";
 
-import { useForm } from "react-hook-form";
+// 1. Controller'ı react-hook-form'dan import ediyoruz
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { redirect } from "next/navigation";
 import { useUser } from "@auth0/nextjs-auth0/client";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const initialAddNewQuoteState: AddNewQuoteState = {
   success: false,
@@ -36,8 +46,10 @@ export default function AddNewQuotePage() {
     FormData
   >(addNewQuote, initialAddNewQuoteState);
 
+  // 3. Controller için 'control' fonksiyonunu useForm'dan çekiyoruz
   const {
     register,
+    control,
     formState: { errors: clientSideErrors },
   } = useForm<NewQuoteInput>({
     mode: "onBlur",
@@ -49,8 +61,8 @@ export default function AddNewQuotePage() {
   if (state.success) return redirect("/user/quotes/new/success");
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center bg-base-200 transition-colors duration-300 pt-24 pb-20 sm:pt-0 sm:pb-0">
-      <nav className="absolute top-0 left-0 w-full flex items-center justify-between p-4 px-6 md:px-10 z-50 bg-transparent">
+    <Main variant="primary">
+      <Nav variant="primary">
         <div className="flex items-center gap-4">
           {/* AVATAR KISMI */}
           <div className="w-10 sm:w-12 rounded-full border-2 border-primary overflow-hidden shadow-sm">
@@ -59,7 +71,7 @@ export default function AddNewQuotePage() {
                 user?.picture ||
                 `https://ui-avatars.com/api/?name=${user?.name || "User"}&background=random`
               }
-              alt="Tailwind-CSS-Avatar-component"
+              alt="User Avatar"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
@@ -86,7 +98,7 @@ export default function AddNewQuotePage() {
         <div>
           <ThemeSwitcher />
         </div>
-      </nav>
+      </Nav>
 
       <form
         className="bg-base-100 rounded-md p-7 md:p-12 flex flex-col w-full shadow-xl border border-base-content/20 max-w-md"
@@ -96,6 +108,7 @@ export default function AddNewQuotePage() {
           <FieldSet>
             <FieldLegend>Add A New Quote</FieldLegend>
             <FieldGroup>
+              {/* Author */}
               <Field>
                 <FieldLabel htmlFor="author">Author</FieldLabel>
                 <Input
@@ -107,7 +120,6 @@ export default function AddNewQuotePage() {
                   defaultValue={state.data?.author}
                   {...register("author")}
                 />
-                {/* TODO: add other aria attributes like aria-describedby and aria-live */}
                 {state.errors?.fieldErrors?.author && (
                   <FieldError errors={state.errors?.fieldErrors?.author}>
                     {state.errors?.fieldErrors?.author}
@@ -119,8 +131,8 @@ export default function AddNewQuotePage() {
                   </FieldError>
                 )}
               </Field>
-              
-               {/* Quote */}
+
+              {/* Quote */}
               <Field>
                 <FieldLabel htmlFor="quote">Quote</FieldLabel>
                 <Textarea
@@ -143,40 +155,50 @@ export default function AddNewQuotePage() {
                 )}
               </Field>
 
-              {/* category */}
+              {/* Category - SHADCN UI KULLANILAN KISIM */}
               <Field>
                 <FieldLabel htmlFor="category">Category</FieldLabel>
-                <select
-                  id="category"
-                  className="w-full rounded-md border border-base-content/20 bg-base-100 p-2 text-sm focus:border-primary focus:outline-none"
-                  aria-invalid={!!state.errors?.fieldErrors?.category}
-                  defaultValue={state.data?.category || ""}
-                  {...register("category")}
-                >
-                  <option value="" disabled>
-                    Select a category...
-                  </option>
-                  <option value="life">Life</option>
-                  <option value="health">Health</option>
-                  <option value="motivation">Motivation</option>
-                  <option value="wisdom">Wisdom</option>
-                </select>
+                <Controller
+                  name="category"
+                  control={control}
+                  defaultValue={
+                    (state.data?.category as NewQuoteInput["category"]) || []
+                  }
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={(val) => field.onChange([val])}
+                      defaultValue={field.value?.[0] || ""}
+                      name={field.name}
+                    >
+                      <SelectTrigger
+                        id="category"
+                        className="w-full bg-base-100 border-base-content/20 focus:ring-primary"
+                        aria-invalid={!!state.errors?.fieldErrors?.category}
+                      >
+                        <SelectValue placeholder="Select a category..." />
+                      </SelectTrigger>
+                      <SelectContent position="popper" className="bg-base-100 shadow-xl z-50 border border-base-content/20">
+                        <SelectItem value="life">Life</SelectItem>
+                        <SelectItem value="health">Health</SelectItem>
+                        <SelectItem value="motivation">Motivation</SelectItem>
+                        <SelectItem value="wisdom">Wisdom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
 
-                
                 {state.errors?.fieldErrors?.category && (
                   <FieldError errors={state.errors?.fieldErrors?.category}>
                     {state.errors?.fieldErrors?.category}
                   </FieldError>
                 )}
 
-              
                 {clientSideErrors.category && (
                   <FieldError errors={[clientSideErrors.category.message!]}>
                     {clientSideErrors.category.message}
                   </FieldError>
                 )}
               </Field>
-              
             </FieldGroup>
           </FieldSet>
           <Field orientation="horizontal">
@@ -190,6 +212,6 @@ export default function AddNewQuotePage() {
         </FieldGroup>
       </form>
       {state.message ? <p className="mt-10">{state.message}</p> : <></>}
-    </main>
+    </Main>
   );
 }

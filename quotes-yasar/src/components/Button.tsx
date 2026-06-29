@@ -13,7 +13,7 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
         
        
-        primary: "bg-slate-300/90 text-slate-700 hover:opacity-70 rounded-md",
+        primary: "bg-slate-300/90 text-slate-700 hover:opacity-70 rounded-md mt-4",
 
         outline:
           "border-border bg-input/30 hover:bg-input/50 hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground",
@@ -44,8 +44,6 @@ const buttonVariants = cva(
   }
 )
 
-// TypeScript'in type="submit" veya onClick gibi özelliklere kızmaması için
-// standart HTML buton özelliklerini (ButtonHTMLAttributes) içeriğe dahil ettik
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
   variant?: "default" | "primary" | "outline" | "secondary" | "ghost" | "destructive" | "link";
